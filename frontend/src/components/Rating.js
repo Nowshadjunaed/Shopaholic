@@ -73,6 +73,7 @@ Rating.defaultProps = {
   color: '#f8e825',
 }
 
+// Type check the props
 Rating.propTypes = {
   value: PropTypes.number.isRequired,
   text: PropTypes.string.isRequired,
