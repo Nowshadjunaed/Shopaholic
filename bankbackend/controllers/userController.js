@@ -1,8 +1,8 @@
 import asyncHandler from 'express-async-handler'
 import User from '../models/userModel.js'
 
-// @desc    Auth user & get token
-// @route   POST /api/users/login
+// @desc    Auth user
+// @route   POST /bankapi/users/login
 // @access  Public
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body
@@ -14,8 +14,8 @@ const authUser = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      isAdmin: user.isAdmin,
-      
+      account_number: user.account_number,
+      balance: user.balance,
     })
   } else {
     res.status(401)
@@ -97,47 +97,44 @@ const registerUser = asyncHandler(async (req, res) => {
 })
 
 
-// @desc    Get user profile
-// @route   GET /api/users/profile
+// @desc    Get user Balance
+// @route   GET /bankapi/users/profile
 // @access  Private
-const getUserProfile = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user._id)
-  
-    if (user) {
-      res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        isAdmin: user.isAdmin,
-      })
-    } else {
-      res.status(404)
-      throw new Error('User not found')
-    }
+const getUserBalance = asyncHandler(async (req, res) => {
+  const { email } = req.body
+
+  const user = await User.findOne({ email })
+
+  if (user) {
+    res.json({
+      account_number: user.account_number,
+      your_current_balance: user.balance,
+    })
+  } else {
+    res.status(404)
+    throw new Error('User not found')
+  }
+
 })
   
 
-// @desc    Update user profile
-// @route   PUT /api/users/profile
+// @desc    Deposit Balance
+// @route   PUT /bankapi/users/profile
 // @access  Private
-const updateUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id)
+const balanceDeposit = asyncHandler(async (req, res) => {
+  const { email, amount } = req.body
 
+  const user = await User.findOne({ email })
+
+  
   if (user) {
-      user.name = req.body.name || user.name
-      user.email = req.body.email || user.email
-      if(req.body.password) {
-        user.password = req.body.password
-      }
+    user.balance = user.balance+amount
+    const updatedUser = await user.save()
 
-      const updatedUser = await user.save()
-
-      res.json({
-        _id: updatedUser._id,
-        name: updatedUser.name,
-        email: updatedUser.email,
-        isAdmin: updatedUser.isAdmin,
-      })
+    res.json({
+      account_number: updatedUser.account_number,
+      your_current_balance: updatedUser.balance,
+    })
   } else {
     res.status(404)
     throw new Error('User not found')
@@ -153,4 +150,4 @@ const getUsers = asyncHandler(async (req, res) => {
   res.json(users)
 })
 
-export { authUser, registerUser, getUserProfile, updateUserProfile, getUsers }
+export { authUser, registerUser, getUserBalance, balanceDeposit, getUsers }
