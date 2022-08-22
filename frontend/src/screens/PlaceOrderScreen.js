@@ -7,8 +7,8 @@ import CheckoutSteps from '../components/CheckoutSteps'
 import Message from '../components/Message'
 
 const PlaceOrderScreen = () => {
-    const navigate = useNavigate()
-    const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const cart = useSelector((state) => state.cart)
 
   //   Calculate prices
