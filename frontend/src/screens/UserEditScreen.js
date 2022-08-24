@@ -9,7 +9,7 @@ import Message from "../components/Message";
 import { USER_UPDATE_RESET } from "../constants/userConstants";
 
 const UserEditScreen = () => {
-  const { id } = useParams();
+  const { id: userId } = useParams();
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -33,19 +33,19 @@ const UserEditScreen = () => {
       dispatch({ type: USER_UPDATE_RESET });
       navigate("/admin/userList");
     } else {
-      if (!user.name || user._id !== id) {
-        dispatch(getUserDetails(id));
+      if (!user.name || user._id !== userId) {
+        dispatch(getUserDetails(userId));
       } else {
         setName(user.name);
         setEmail(user.email);
         setIsAdmin(user.isAdmin);
       }
     }
-  }, [dispatch, navigate, successUpdate, user, id]);
+  }, [dispatch, navigate, successUpdate, user, userId]);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(updateUser({ _id: id, name, email, isAdmin }));
+    dispatch(updateUser({ _id: userId, name, email, isAdmin }));
   };
 
   return (
@@ -92,7 +92,7 @@ const UserEditScreen = () => {
               ></Form.Check>
             </Form.Group>
 
-            <Button type="submit" variant="primary">
+            <Button className="my-3" type="submit" variant="primary">
               Update
             </Button>
           </Form>
