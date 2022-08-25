@@ -57,21 +57,26 @@ switch (action.type) {
 
 export const orderPayReducer = (state = {}, action) => {
 switch (action.type) {
+  
   case ORDER_PAY_REQUEST:
+    console.log(action.type)
     return {
       loading: true,
     }
   case ORDER_PAY_SUCCESS:
+    console.log(action.type)
     return {
       loading: false,
       success: true,
     }
   case ORDER_PAY_FAIL:
+    console.log(action.type)
     return {
       loading: false,
       error: action.payload,
     }
   case ORDER_PAY_RESET:
+    console.log(action.type)
     return {}
   default:
     return state
