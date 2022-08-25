@@ -101,9 +101,9 @@ const registerUser = asyncHandler(async (req, res) => {
 // @route   GET /bankapi/users/profile
 // @access  Private
 const getUserBalance = asyncHandler(async (req, res) => {
-  const { email } = req.body
+  const { account_number } = req.body
 
-  const user = await User.findOne({ email })
+  const user = await User.findOne({ account_number })
 
   if (user) {
     res.json({
@@ -122,9 +122,9 @@ const getUserBalance = asyncHandler(async (req, res) => {
 // @route   PUT /bankapi/users/profile
 // @access  Private
 const balanceDeposit = asyncHandler(async (req, res) => {
-  const { email, amount } = req.body
+  const { account_number, amount } = req.body
 
-  const user = await User.findOne({ email })
+  const user = await User.findOne({ account_number })
 
   
   if (user) {
