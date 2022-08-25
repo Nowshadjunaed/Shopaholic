@@ -3,6 +3,6 @@ import { payMoney } from '../controllers/paymentController.js'
 const router = express.Router()
 
 router.route('/')
-    .put(payMoney)
+    .post(payMoney)
 
 export default router
