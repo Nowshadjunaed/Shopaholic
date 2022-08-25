@@ -8,9 +8,9 @@ import User from '../models/userModel.js'
 // @route   PUT /bankapi/payment/
 // @access  Private
 const payMoney = asyncHandler(async (req, res) => {
-  const { email, amount, receiver_email } = req.body
+  const { email, account_number, amount, receiver_email } = req.body
 
-  const user = await User.findOne({ email })
+  const user = await User.findOne({ account_number })
 
   
   if (user) {

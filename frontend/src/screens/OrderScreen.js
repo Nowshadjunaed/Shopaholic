@@ -76,8 +76,10 @@ const OrderScreen = ({ match }) => {
   ]);
 
   const payNowHandler = async (total_amount) => {
+    console.log(order.user)
     const paymentdata = {
       email: order.user.email,
+      account_number: order.user.account_number,
       amount: total_amount,
       receiver_email: "admin@gmail.com",
     };
