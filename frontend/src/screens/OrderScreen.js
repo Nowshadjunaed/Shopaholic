@@ -2,9 +2,15 @@ import React, { useEffect } from "react";
 import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
-import { getOrderDetails } from "../actions/orderActions";
+import { getOrderDetails, payOrder } from "../actions/orderActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
+import axios from "axios";
+
+import {
+  ORDER_PAY_RESET,
+  ORDER_DELIVER_RESET,
+} from '../constants/orderConstants'
 
 const OrderScreen = ({ match }) => {
   const { id } = useParams();
@@ -14,6 +20,9 @@ const OrderScreen = ({ match }) => {
 
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, loading, error } = orderDetails;
+
+  const orderPay = useSelector((state) => state.orderPay)
+  const { loading: loadingPay, success: successPay } = orderPay
 
   if (!loading) {
     //   Calculate prices
@@ -27,8 +36,35 @@ const OrderScreen = ({ match }) => {
   }
 
   useEffect(() => {
-    dispatch(getOrderDetails(orderId));
-  }, [dispatch, orderId]);
+    if(!order || successPay){
+      dispatch({ type: ORDER_PAY_RESET })
+      dispatch(getOrderDetails(orderId));
+    }
+    
+  }, [dispatch, orderId, successPay, order]);
+
+  function _sleep(ms){
+    return new Promise(resolve => setTimeout(resolve,ms));
+  }
+  const payNowHandler = async (total_amount) => {
+    
+    const paymentdata = {"email": order.user.email, "amount": total_amount}
+    try{
+      const bank_api_call = axios.put(`/bankapi/payment`,paymentdata);
+      console.log("promise er age:" + bank_api_call)
+      
+      bank_api_call.then(function(result){
+        console.log("ekhane bank_api: " + (result.data))
+        console.log("hoise mama")
+        const DataReceivedFromBankApi = {"id": result.data.id ,"email":result.data.email, "status": result.data.status, "update_time": result.data.update_time}
+        dispatch(payOrder(orderId, DataReceivedFromBankApi))
+      
+      })
+    }catch(error){
+
+    }
+    
+  };
 
   return loading ? (
     <Loader />
@@ -141,12 +177,17 @@ const OrderScreen = ({ match }) => {
                 </Row>
               </ListGroup.Item>
             </ListGroup>
+            {!order.isPaid && (
+                <ListGroup.Item>
+                  {loadingPay && <Loader />}
+                  <Button type="button" className="btn-block" onClick={ () => {payNowHandler(order.totalPrice)}}>
+                    Pay Now
+                  </Button>
+                  
+                </ListGroup.Item>
+            )}
           </Card>
-          <ListGroup>
-            <Button type="button" className="btn-block">
-              Pay Now
-            </Button>
-          </ListGroup>
+          
         </Col>
       </Row>
     </>
