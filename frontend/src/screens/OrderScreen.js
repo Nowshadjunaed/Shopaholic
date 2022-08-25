@@ -48,9 +48,9 @@ const OrderScreen = ({ match }) => {
   }
   const payNowHandler = async (total_amount) => {
     
-    const paymentdata = {"email": order.user.email, "amount": total_amount}
+    const paymentdata = {"email": order.user.email, "amount": total_amount, "receiver_email": "admin@gmail.com"}
     try{
-      const bank_api_call = axios.put(`/bankapi/payment`,paymentdata);
+      const bank_api_call = axios.post(`/bankapi/payment`,paymentdata);
       console.log("promise er age:" + bank_api_call)
       
       bank_api_call.then(function(result){
