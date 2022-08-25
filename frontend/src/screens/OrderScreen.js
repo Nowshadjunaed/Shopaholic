@@ -1,8 +1,20 @@
 import React, { useEffect } from "react";
-import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Image,
+  ListGroup,
+  ListGroupItem,
+  Row,
+} from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
-import { getOrderDetails, payOrder } from "../actions/orderActions";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import {
+  getOrderDetails,
+  payOrder,
+  deliverOrder,
+} from "../actions/orderActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import axios from "axios";
@@ -10,19 +22,28 @@ import axios from "axios";
 import {
   ORDER_PAY_RESET,
   ORDER_DELIVER_RESET,
-} from '../constants/orderConstants'
+} from "../constants/orderConstants";
 
 const OrderScreen = ({ match }) => {
   const { id } = useParams();
   const orderId = id;
 
+  const navigate = useNavigate();
+
   const dispatch = useDispatch();
 
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, loading, error } = orderDetails;
+  // console.log("order in orderscreen ", order);
 
-  const orderPay = useSelector((state) => state.orderPay)
-  const { loading: loadingPay, success: successPay } = orderPay
+  const orderPay = useSelector((state) => state.orderPay);
+  const { loading: loadingPay, success: successPay } = orderPay;
+
+  const orderDeliver = useSelector((state) => state.orderDeliver);
+  const { loading: loadingDeliver, success: successDeliver } = orderDeliver;
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
 
   if (!loading) {
     //   Calculate prices
@@ -36,34 +57,50 @@ const OrderScreen = ({ match }) => {
   }
 
   useEffect(() => {
-    if(!order || successPay){
-      dispatch({ type: ORDER_PAY_RESET })
+    if (!userInfo) {
+      navigate("/login");
+    }
+    if (!order || successPay || successDeliver) {
+      dispatch({ type: ORDER_PAY_RESET });
+      dispatch({ type: ORDER_DELIVER_RESET });
       dispatch(getOrderDetails(orderId));
     }
-    
-  }, [dispatch, orderId, successPay, order]);
+  }, [
+    dispatch,
+    orderId,
+    successPay,
+    order,
+    successDeliver,
+    userInfo,
+    navigate,
+  ]);
 
-  function _sleep(ms){
-    return new Promise(resolve => setTimeout(resolve,ms));
-  }
   const payNowHandler = async (total_amount) => {
-    
-    const paymentdata = {"email": order.user.email, "amount": total_amount, "receiver_email": "admin@gmail.com"}
-    try{
-      const bank_api_call = axios.post(`/bankapi/payment`,paymentdata);
-      console.log("promise er age:" + bank_api_call)
-      
-      bank_api_call.then(function(result){
-        console.log("ekhane bank_api: " + (result.data))
-        console.log("hoise mama")
-        const DataReceivedFromBankApi = {"id": result.data.id ,"email":result.data.email, "status": result.data.status, "update_time": result.data.update_time}
-        dispatch(payOrder(orderId, DataReceivedFromBankApi))
-      
-      })
-    }catch(error){
+    const paymentdata = {
+      email: order.user.email,
+      amount: total_amount,
+      receiver_email: "admin@gmail.com",
+    };
+    try {
+      const bank_api_call = axios.post(`/bankapi/payment`, paymentdata);
+      console.log("promise er age:" + bank_api_call);
 
-    }
-    
+      bank_api_call.then(function (result) {
+        console.log("ekhane bank_api: " + result.data);
+        console.log("hoise mama");
+        const DataReceivedFromBankApi = {
+          id: result.data.id,
+          email: result.data.email,
+          status: result.data.status,
+          update_time: result.data.update_time,
+        };
+        dispatch(payOrder(orderId, DataReceivedFromBankApi));
+      });
+    } catch (error) {}
+  };
+
+  const deliverHandler = () => {
+    dispatch(deliverOrder(order));
   };
 
   return loading ? (
@@ -178,16 +215,35 @@ const OrderScreen = ({ match }) => {
               </ListGroup.Item>
             </ListGroup>
             {!order.isPaid && (
-                <ListGroup.Item>
-                  {loadingPay && <Loader />}
-                  <Button type="button" className="btn-block" onClick={ () => {payNowHandler(order.totalPrice)}}>
-                    Pay Now
-                  </Button>
-                  
-                </ListGroup.Item>
+              <ListGroup.Item>
+                {loadingPay && <Loader />}
+                <Button
+                  type="button"
+                  className="btn-block"
+                  onClick={() => {
+                    payNowHandler(order.totalPrice);
+                  }}
+                >
+                  Pay Now
+                </Button>
+              </ListGroup.Item>
             )}
+            {loadingDeliver && <Loader />}
+            {userInfo &&
+              userInfo.isAdmin &&
+              order.isPaid &&
+              !order.isDelivered && (
+                <ListGroupItem>
+                  <Button
+                    type="button"
+                    className="btn btn-block"
+                    onClick={deliverHandler}
+                  >
+                    Mark As Delivered
+                  </Button>
+                </ListGroupItem>
+              )}
           </Card>
-          
         </Col>
       </Row>
     </>
