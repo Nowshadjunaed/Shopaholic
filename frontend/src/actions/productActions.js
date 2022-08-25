@@ -17,13 +17,11 @@ import {
   PRODUCT_UPDATE_SUCCESS,
 } from "../constants/productConstants";
 
-import { BASEURL_ECOMMERCE } from "../constants/urlConstants";
-
 export const listProducts = () => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_LIST_REQUEST });
 
-    const { data } = await axios.get(`${BASEURL_ECOMMERCE}/api/products`);
+    const { data } = await axios.get(`/api/products`);
 
     dispatch({
       type: PRODUCT_LIST_SUCCESS,
@@ -44,7 +42,7 @@ export const listProductDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST });
 
-    const { data } = await axios.get(`${BASEURL_ECOMMERCE}/api/products/${id}`);
+    const { data } = await axios.get(`/api/products/${id}`);
 
     dispatch({
       type: PRODUCT_DETAILS_SUCCESS,
@@ -77,7 +75,7 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
       },
     };
 
-    await axios.delete(`${BASEURL_ECOMMERCE}/api/products/${id}`, config);
+    await axios.delete(`/api/products/${id}`, config);
 
     dispatch({
       type: PRODUCT_DELETE_SUCCESS,
@@ -110,11 +108,7 @@ export const createProduct = () => async (dispatch, getState) => {
     };
 
     // we are making a post request but not sending any data. That's why sent a empty object
-    const { data } = await axios.post(
-      `${BASEURL_ECOMMERCE}/api/products/`,
-      {},
-      config
-    );
+    const { data } = await axios.post(`/api/products/`, {}, config);
 
     dispatch({
       type: PRODUCT_CREATE_SUCCESS,
@@ -150,7 +144,7 @@ export const updateProduct = (product) => async (dispatch, getState) => {
 
     // we are making a post request but not sending any data. That's why sent a empty object
     const { data } = await axios.put(
-      `${BASEURL_ECOMMERCE}/api/products/${product._id}`,
+      `/api/products/${product._id}`,
       product,
       config
     );
