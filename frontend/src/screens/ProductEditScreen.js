@@ -8,7 +8,6 @@ import FormContainer from "../components/FormContainer";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { PRODUCT_UPDATE_RESET } from "../constants/productConstants";
-import { BASEURL_ECOMMERCE } from "../constants/urlConstants";
 
 const ProductEditScreen = () => {
   const { id: productId } = useParams();
@@ -83,11 +82,9 @@ const ProductEditScreen = () => {
           "Content-Type": "multipart/form-data",
         },
       };
-      const { data } = await axios.post(
-        `${BASEURL_ECOMMERCE}/api/upload`,
-        formData,
-        config
-      );
+      const { data } = await axios.post(`/api/upload`, formData, config);
+
+      // console.log("image path in producteditscreen: ", data);
 
       setImage(data);
       setUploading(false);
