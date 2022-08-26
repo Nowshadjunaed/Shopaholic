@@ -7,6 +7,7 @@ import { getUserDetails, updateUserProfile } from '../actions/userActions'
 import Loader from '../components/Loader'
 import Message from '../components/Message'
 import { listMyOrders } from '../actions/orderActions'
+import { USER_UPDATE_PROFILE_RESET } from '../constants/userConstants'
 
 
 const ProfileScreen = () => {
@@ -37,9 +38,10 @@ const ProfileScreen = () => {
         if(!userInfo) {
             navigate('/login')
         } else {
-            if(!user.name) {
+            if(!user || !user.name || success) {
                 // gets the Logged In user's Id from api/users/profile and store it in state 
                 // and then gets the user from state by useSelector in next render 
+                dispatch({ type: USER_UPDATE_PROFILE_RESET })
                 dispatch(getUserDetails('profile'))
                 dispatch(listMyOrders())
             } else {
@@ -47,7 +49,7 @@ const ProfileScreen = () => {
                 setEmail(user.email)
             }
         }
-    }, [dispatch, navigate, user.email, user.name, userInfo])
+    }, [dispatch, navigate, user.email, user.name, userInfo, success])
 
     const submitHandler = (e) => {
         e.preventDefault()

@@ -41,10 +41,12 @@ const ProductScreen = () => {
 
   useEffect(() => {
     if (successProductReview) {
-      alert('Review Submitted!')
       setRating(0)
       setComment('')
-      dispatch({ type: PRODUCT_CREATE_REVIEW_RESET })
+      if (!product._id || product._id !== id) {
+        dispatch(listProductDetails(id))
+        dispatch({ type: PRODUCT_CREATE_REVIEW_RESET })
+      }
     }
     dispatch(listProductDetails(id));
   }, [dispatch, id, successProductReview]);
