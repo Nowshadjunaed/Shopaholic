@@ -10,7 +10,7 @@ import {
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { payOrderSupplier } from "../actions/orderActions";
+import { getOrderDetails, payOrderSupplier } from "../actions/orderActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import axios from "axios";
@@ -31,8 +31,19 @@ const OrderSupplierPaymentScreen = () => {
 
   const dispatch = useDispatch();
 
+  const orderSupplierPay = useSelector((state) => state.orderSupplierPay);
+  const {
+    loading: loadingSupplierPay,
+    success: successSupplierPay,
+    error: errorSupplierPay,
+  } = orderSupplierPay;
+
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
+
+  const orderDetails = useSelector((state) => state.orderDetails);
+  const { order, loading, error } = orderDetails;
+  console.log("eta order ", order);
 
   const getSupplierPaymentDetails = useCallback(async () => {
     const config = {
@@ -60,13 +71,11 @@ const OrderSupplierPaymentScreen = () => {
         supplierPaymentDetailsObject[
           orderItem.product.supplierBankAccount
         ].amount = addDecimals(
-          Number(
+          addDecimals(
             supplierPaymentDetailsObject[orderItem.product.supplierBankAccount]
               .amount
           ) +
-            Number(orderItem.qty) *
-              Number(orderItem.price) *
-              Number(SUPPLIER_PERCENTAGE)
+            orderItem.qty * orderItem.price * Number(SUPPLIER_PERCENTAGE)
         );
       } else {
         supplierPaymentDetailsObject[orderItem.product.supplierBankAccount] = {
@@ -74,9 +83,7 @@ const OrderSupplierPaymentScreen = () => {
           email: orderItem.product.supplierEmail,
           bankAccount: orderItem.product.supplierBankAccount,
           amount: addDecimals(
-            Number(orderItem.qty) *
-              Number(orderItem.price) *
-              Number(SUPPLIER_PERCENTAGE)
+            orderItem.qty * orderItem.price * Number(SUPPLIER_PERCENTAGE)
           ),
         };
       }
@@ -92,15 +99,17 @@ const OrderSupplierPaymentScreen = () => {
   }, [id, userInfo]);
 
   useEffect(() => {
-    if (!userInfo) {
+    if (!userInfo || !userInfo.isAdmin) {
       navigate("/login");
     } else {
+      console.log("eta order id", orderId);
+      dispatch(getOrderDetails(orderId));
       getSupplierPaymentDetails();
     }
   }, [dispatch, getSupplierPaymentDetails, id, navigate, orderId, userInfo]);
 
   const payOrderSupplierHandler = () => {
-    dispatch(payOrderSupplier);
+    dispatch(payOrderSupplier(orderId, supplierPaymentDetails));
   };
 
   return (
@@ -127,6 +136,7 @@ const OrderSupplierPaymentScreen = () => {
             ))}
         </tbody>
       </Table>
+      {loadingSupplierPay && <Loader />}
       <Button
         variant="primary"
         className="btn-sm"
@@ -134,6 +144,22 @@ const OrderSupplierPaymentScreen = () => {
       >
         Pay Now
       </Button>
+      {order?.isSupplierPaid && <h>dsklfad;fljsd</h>}
+
+      {/* {userInfo &&
+              userInfo.isAdmin &&
+              !order.isSupplierPaid &&
+              (
+                <ListGroupItem>
+                  <Button
+                    type="button"
+                    className="btn btn-block"
+                    onClick={deliverHandler}
+                  >
+                    Mark As Delivered
+                  </Button>
+                </ListGroupItem>
+              )} */}
     </>
   );
 };

@@ -78,6 +78,31 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Update order supplier to paid
+// @route   GET /api/orders/:id/supplierPay
+// @access  Private
+const updateOrderSupplierToPaid = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  if (order) {
+    order.isSupplierPaid = true;
+    order.supplierPaidAt = Date.now();
+    order.supplierPaymentResult = {
+      id: req.body.id,
+      status: req.body.status,
+      update_time: req.body.update_time,
+      email_address: req.body.email,
+    };
+
+    const updatedOrderSupplier = await order.save();
+
+    res.json(updatedOrderSupplier);
+  } else {
+    res.status(404);
+    throw new Error("Order not found");
+  }
+});
+
 // @desc    Update order to delivered
 // @route   GET /api/orders/:id/deliver
 // @access  Private/Admin
@@ -117,6 +142,7 @@ export {
   addOrderItems,
   getOrderById,
   updateOrderToPaid,
+  updateOrderSupplierToPaid,
   updateOrderToDelivered,
   getOrders,
   getMyOrders,

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ADMIN_BANK_ACCOUNT, ADMIN_EMAIL } from "../constants/adminConstants";
 import { CART_CLEAR_ITEMS } from "../constants/cartConstants";
 import {
   ORDER_CREATE_REQUEST,
@@ -18,6 +19,9 @@ import {
   ORDER_DELIVER_REQUEST,
   ORDER_DELIVER_SUCCESS,
   ORDER_DELIVER_FAIL,
+  ORDER_SUPPLIER_PAY_REQUEST,
+  ORDER_SUPPLIER_PAY_SUCCESS,
+  ORDER_SUPPLIER_PAY_FAIL,
 } from "../constants/orderConstants";
 import { logout } from "./userActions";
 
@@ -145,42 +149,112 @@ export const payOrder =
   };
 
 export const payOrderSupplier =
-  (orderId, paymentResult) => async (dispatch, getState) => {
-    //   try {
-    //     dispatch({
-    //       type: ORDER_PAY_REQUEST,
-    //     });
-    //     const {
-    //       userLogin: { userInfo },
-    //     } = getState();
-    //     const config = {
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //         Authorization: `Bearer ${userInfo.token}`,
-    //       },
-    //     };
-    //     const { data } = await axios.put(
-    //       `/api/orders/${orderId}/pay`,
-    //       paymentResult,
-    //       config
-    //     );
-    //     dispatch({
-    //       type: ORDER_PAY_SUCCESS,
-    //       payload: data,
-    //     });
-    //   } catch (error) {
-    //     const message =
-    //       error.response && error.response.data.message
-    //         ? error.response.data.message
-    //         : error.message;
-    //     if (message === "Not authorized, token failed") {
-    //       dispatch(logout());
-    //     }
-    //     dispatch({
-    //       type: ORDER_PAY_FAIL,
-    //       payload: message,
-    //     });
-    //   }
+  (orderId, supplierPaymentDetails) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: ORDER_SUPPLIER_PAY_REQUEST,
+      });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const proceedTransaction = () => {
+        supplierPaymentDetails.forEach(async (supplier) => {
+          try {
+            const paymentData = {
+              email: ADMIN_EMAIL,
+              account_number: ADMIN_BANK_ACCOUNT,
+              amount: supplier.amount,
+              receiver_account_number: supplier.bankAccount,
+            };
+            const config = {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${userInfo.token}`,
+              },
+            };
+
+            console.log("proceed transaction is called", paymentData);
+            const { data: supplierPaymentResult } = await axios.post(
+              `/bankapi/payment`,
+              paymentData,
+              config
+            );
+
+            console.log("supplierPaymentResult ", supplierPaymentResult);
+
+            const { data } = await axios.put(
+              `/api/orders/${orderId}/supplierPay`,
+              supplierPaymentResult,
+              config
+            );
+
+            dispatch({
+              type: ORDER_SUPPLIER_PAY_SUCCESS,
+              payload: data,
+            });
+
+            // dispatch supplier, please deliver
+
+            
+          } catch (error) {
+            const message =
+              error.response && error.response.data.message
+                ? error.response.data.message
+                : error.message;
+            if (message === "Not authorized, token failed") {
+              dispatch(logout());
+            }
+            dispatch({
+              type: ORDER_SUPPLIER_PAY_FAIL,
+              payload: message,
+            });
+          }
+        });
+      };
+
+      let successfulTransaction = 0;
+      supplierPaymentDetails.forEach(async (supplier) => {
+        const paymentData = {
+          email: ADMIN_EMAIL,
+          account_number: ADMIN_BANK_ACCOUNT,
+          amount: supplier.amount,
+          receiver_account_number: supplier.bankAccount,
+        };
+
+        console.log(paymentData);
+        const { data } = await axios.post(
+          `/bankapi/payment/possible`,
+          paymentData
+        );
+
+        const { isPaymentPossible } = data;
+        console.log("is possible", isPaymentPossible);
+        if (isPaymentPossible) {
+          successfulTransaction = successfulTransaction + 1;
+        }
+        console.log(
+          "no of successfull transaction",
+          Number(successfulTransaction)
+        );
+
+        if (Number(successfulTransaction) === supplierPaymentDetails.length)
+          proceedTransaction();
+      });
+    } catch (error) {
+      const message =
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message;
+      if (message === "Not authorized, token failed") {
+        dispatch(logout());
+      }
+      dispatch({
+        type: ORDER_SUPPLIER_PAY_FAIL,
+        payload: message,
+      });
+    }
   };
 
 export const listOrders = () => async (dispatch, getState) => {

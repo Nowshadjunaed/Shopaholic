@@ -4,5 +4,5 @@ const router = express.Router();
 
 router.route("/").post(payMoney);
 
-router.route("/possible").get(paymentPossible);
+router.route("/possible").post(paymentPossible);
 export default router;

@@ -62,14 +62,26 @@ const OrderListScreen = () => {
                 </td>
 
                 <td>
-                  {order.isPaid && order.isDelivered ? (
-                    <LinkContainer to={`/order/${order._id}/supplierPayment`}>
+                  {order.isPaid && order.isSupplierPaid ? (
+                    <LinkContainer
+                      to={`/admin/order/${order._id}/supplierPayment`}
+                    >
                       <Button variant="success" className="btn-sm">
                         Payment Details
                       </Button>
                     </LinkContainer>
+                  ) : !order.isPaid ? (
+                    <LinkContainer
+                      to={`/admin/order/${order._id}/supplierPayment`}
+                    >
+                      <Button variant="danger" className="btn-sm" disabled>
+                        Unpaid Order
+                      </Button>
+                    </LinkContainer>
                   ) : (
-                    <LinkContainer to={`/order/${order._id}/supplierPayment`}>
+                    <LinkContainer
+                      to={`/admin/order/${order._id}/supplierPayment`}
+                    >
                       <Button variant="light" className="btn-sm">
                         Pay To Supplier
                       </Button>
