@@ -30,7 +30,7 @@ const App = () => {
             {/* Routes tells to choose just 1 best matched Route. Route order doesn't matter. */}
             <Route path="/order/:id" element={<OrderScreen />} />
             <Route
-              path="/order/:id/supplierPayment"
+              path="/admin/order/:id/supplierPayment"
               element={<OrderSupplierPaymentScreen />}
             />
             <Route path="/shipping" element={<ShippingScreen />} />
