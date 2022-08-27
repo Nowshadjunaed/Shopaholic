@@ -1,8 +1,8 @@
-import express from 'express'
-import { payMoney } from '../controllers/paymentController.js'
-const router = express.Router()
+import express from "express";
+import { payMoney, paymentPossible } from "../controllers/paymentController.js";
+const router = express.Router();
 
-router.route('/')
-    .post(payMoney)
+router.route("/").post(payMoney);
 
-export default router
+router.route("/possible").get(paymentPossible);
+export default router;

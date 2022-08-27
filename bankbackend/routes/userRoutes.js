@@ -1,12 +1,15 @@
-import express from 'express'
-import { authUser, getUserBalance, registerUser, balanceDeposit } from '../controllers/userController.js'
-const router = express.Router()
+import express from "express";
+import {
+  authUser,
+  getUserBalance,
+  registerUser,
+  balanceDeposit,
+  getUsers,
+} from "../controllers/userController.js";
+const router = express.Router();
 
-router.route('/')
-    .post(registerUser)
-router.post('/login', authUser)
-router.route('/profile')
-    .get(getUserBalance)
-    .put(balanceDeposit)
+router.route("/").post(registerUser).get(getUsers);
+router.post("/login", authUser);
+router.route("/profile").get(getUserBalance).put(balanceDeposit);
 
-export default router
+export default router;

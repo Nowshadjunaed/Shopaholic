@@ -20,6 +20,9 @@ const ProductEditScreen = () => {
   const [category, setCategory] = useState("");
   const [countInStock, setCountInStock] = useState(0);
   const [description, setDescription] = useState("");
+  const [supplierName, setSupplierName] = useState("");
+  const [supplierEmail, setSupplierEmail] = useState("");
+  const [supplierBankAccount, setSupplierBankAccount] = useState("");
   const [uploading, setUploading] = useState(false);
 
   const dispatch = useDispatch();
@@ -49,6 +52,9 @@ const ProductEditScreen = () => {
         setCategory(product.category);
         setCountInStock(product.countInStock);
         setDescription(product.description);
+        setSupplierName(product.supplierName);
+        setSupplierEmail(product.supplierEmail);
+        setSupplierBankAccount(product.supplierBankAccount);
       }
     }
   }, [dispatch, navigate, product, productId, successUpdate]);
@@ -66,6 +72,9 @@ const ProductEditScreen = () => {
         category,
         description,
         countInStock,
+        supplierName,
+        supplierEmail,
+        supplierBankAccount,
       })
     );
   };
@@ -184,6 +193,36 @@ const ProductEditScreen = () => {
                 placeholder="Enter description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+
+            <Form.Group controlId="supplierName">
+              <Form.Label>Supplier Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter Supplier Name"
+                value={supplierName}
+                onChange={(e) => setSupplierName(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+
+            <Form.Group controlId="supplierEmail">
+              <Form.Label>Supplier Email</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter Supplier Email"
+                value={supplierEmail}
+                onChange={(e) => setSupplierEmail(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+
+            <Form.Group controlId="supplierBankAccount">
+              <Form.Label>Supplier Bank Account</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter Supplier Bank Account"
+                value={supplierBankAccount}
+                onChange={(e) => setSupplierBankAccount(e.target.value)}
               ></Form.Control>
             </Form.Group>
 

@@ -18,6 +18,7 @@ import OrderScreen from "./screens/OrderScreen";
 import ProductListScreen from "./screens/ProductListScreen";
 import OrderListScreen from "./screens/OrderListScreen";
 import ProductEditScreen from "./screens/ProductEditScreen";
+import OrderSupplierPaymentScreen from "./screens/OrderSupplierPaymentScreen";
 
 const App = () => {
   return (
@@ -28,6 +29,10 @@ const App = () => {
           <Routes>
             {/* Routes tells to choose just 1 best matched Route. Route order doesn't matter. */}
             <Route path="/order/:id" element={<OrderScreen />} />
+            <Route
+              path="/order/:id/supplierPayment"
+              element={<OrderSupplierPaymentScreen />}
+            />
             <Route path="/shipping" element={<ShippingScreen />} />
             <Route path="/payment" element={<PaymentScreen />} />
             <Route path="/placeorder" element={<PlaceOrderScreen />} />
@@ -45,7 +50,7 @@ const App = () => {
               path="/admin/product/:id/edit"
               element={<ProductEditScreen />}
             />
-            <Route path='/search/:keyword' element={<HomeScreen />} />
+            <Route path="/search/:keyword" element={<HomeScreen />} />
             <Route exact path="/" element={<HomeScreen />} />
           </Routes>
         </Container>

@@ -41,6 +41,7 @@ const OrderListScreen = () => {
               <th>DATE</th>
               <th>TOTAL</th>
               <th>PAID</th>
+              <th>Supplier Payment</th>
               <th>DELIVERED</th>
               <th></th>
             </tr>
@@ -59,6 +60,23 @@ const OrderListScreen = () => {
                     <i className="fas fa-times" style={{ color: "red" }}></i>
                   )}
                 </td>
+
+                <td>
+                  {order.isPaid && order.isDelivered ? (
+                    <LinkContainer to={`/order/${order._id}/supplierPayment`}>
+                      <Button variant="success" className="btn-sm">
+                        Payment Details
+                      </Button>
+                    </LinkContainer>
+                  ) : (
+                    <LinkContainer to={`/order/${order._id}/supplierPayment`}>
+                      <Button variant="light" className="btn-sm">
+                        Pay To Supplier
+                      </Button>
+                    </LinkContainer>
+                  )}
+                </td>
+
                 <td>
                   {order.isDelivered ? (
                     order.deliveredAt.substring(0, 10)
@@ -66,9 +84,10 @@ const OrderListScreen = () => {
                     <i className="fas fa-times" style={{ color: "red" }}></i>
                   )}
                 </td>
+
                 <td>
                   <LinkContainer to={`/order/${order._id}`}>
-                    <Button varint="light" className="btn-sm">
+                    <Button variant="info" className="btn-sm">
                       Details
                     </Button>
                   </LinkContainer>
