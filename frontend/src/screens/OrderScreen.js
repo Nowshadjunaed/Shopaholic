@@ -24,7 +24,9 @@ import {
   ORDER_DELIVER_RESET,
 } from "../constants/orderConstants";
 
-const OrderScreen = ({ match }) => {
+import { ADMIN_EMAIL } from "../constants/adminConstants";
+
+const OrderScreen = () => {
   const { id } = useParams();
   const orderId = id;
 
@@ -76,12 +78,12 @@ const OrderScreen = ({ match }) => {
   ]);
 
   const payNowHandler = async (total_amount) => {
-    console.log(order.user)
+    console.log(order.user);
     const paymentdata = {
       email: order.user.email,
       account_number: order.user.account_number,
       amount: total_amount,
-      receiver_email: "admin@gmail.com",
+      receiver_email: ADMIN_EMAIL,
     };
     try {
       const bank_api_call = axios.post(`/bankapi/payment`, paymentdata);

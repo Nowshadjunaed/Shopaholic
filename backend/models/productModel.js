@@ -8,7 +8,7 @@ const reviewSchema = mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'User',
+      ref: "User",
     },
   },
   {
@@ -40,6 +40,18 @@ const productSchema = mongoose.Schema(
       required: true,
     },
     description: {
+      type: String,
+      required: true,
+    },
+    supplierName: {
+      type: String,
+      required: true,
+    },
+    supplierEmail: {
+      type: String,
+      required: true,
+    },
+    supplierBankAccount: {
       type: String,
       required: true,
     },
