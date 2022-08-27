@@ -25,6 +25,10 @@ import {
   ORDER_SUPPLIER_PAY_SUCCESS,
   ORDER_SUPPLIER_PAY_FAIL,
   ORDER_SUPPLIER_PAY_RESET,
+  ORDER_SUPPLIER_PAY_DETAILS_REQUEST,
+  ORDER_SUPPLIER_PAY_DETAILS_SUCCESS,
+  ORDER_SUPPLIER_PAY_DETAILS_FAIL,
+  ORDER_SUPPLIER_PAY_DETAILS_RESET,
 } from "../constants/orderConstants";
 
 export const orderCreateReducer = (state = {}, action) => {
@@ -103,7 +107,6 @@ export const orderPayReducer = (state = {}, action) => {
   }
 };
 
-
 export const orderSupplierPayReducer = (state = {}, action) => {
   switch (action.type) {
     case ORDER_SUPPLIER_PAY_REQUEST:
@@ -114,6 +117,7 @@ export const orderSupplierPayReducer = (state = {}, action) => {
       return {
         loading: false,
         success: true,
+        data: action.payload,
       };
     case ORDER_SUPPLIER_PAY_FAIL:
       return {
@@ -121,6 +125,33 @@ export const orderSupplierPayReducer = (state = {}, action) => {
         error: action.payload,
       };
     case ORDER_SUPPLIER_PAY_RESET:
+      return {};
+    default:
+      return state;
+  }
+};
+
+export const orderSupplierPayDetailsReducer = (
+  state = { orderSupplierPayDetails: [] },
+  action
+) => {
+  switch (action.type) {
+    case ORDER_SUPPLIER_PAY_DETAILS_REQUEST:
+      return {
+        loading: true,
+      };
+    case ORDER_SUPPLIER_PAY_DETAILS_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        data: action.payload,
+      };
+    case ORDER_SUPPLIER_PAY_DETAILS_FAIL:
+      return {
+        loading: false,
+        error: action.payload,
+      };
+    case ORDER_SUPPLIER_PAY_DETAILS_RESET:
       return {};
     default:
       return state;

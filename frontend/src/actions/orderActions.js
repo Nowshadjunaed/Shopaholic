@@ -1,5 +1,9 @@
 import axios from "axios";
-import { ADMIN_BANK_ACCOUNT, ADMIN_EMAIL } from "../constants/adminConstants";
+import {
+  ADMIN_BANK_ACCOUNT,
+  ADMIN_EMAIL,
+  SUPPLIER_PERCENTAGE,
+} from "../constants/adminConstants";
 import { CART_CLEAR_ITEMS } from "../constants/cartConstants";
 import {
   ORDER_CREATE_REQUEST,
@@ -22,6 +26,9 @@ import {
   ORDER_SUPPLIER_PAY_REQUEST,
   ORDER_SUPPLIER_PAY_SUCCESS,
   ORDER_SUPPLIER_PAY_FAIL,
+  ORDER_SUPPLIER_PAY_DETAILS_REQUEST,
+  ORDER_SUPPLIER_PAY_DETAILS_SUCCESS,
+  ORDER_SUPPLIER_PAY_DETAILS_FAIL,
 } from "../constants/orderConstants";
 import { logout } from "./userActions";
 
@@ -196,8 +203,6 @@ export const payOrderSupplier =
             });
 
             // dispatch supplier, please deliver
-
-            
           } catch (error) {
             const message =
               error.response && error.response.data.message
@@ -371,3 +376,84 @@ export const listMyOrders = () => async (dispatch, getState) => {
     });
   }
 };
+
+export const getOrderSupplierPaymentDetails =
+  (id) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: ORDER_SUPPLIER_PAY_DETAILS_REQUEST,
+      });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+      const { data } = await axios.get(`/api/orders/${id}`, config);
+
+      console.log("eta api er data ", data.orderItems);
+      const order = data;
+
+      //   Calculate prices
+      const addDecimals = (num) => {
+        return (Math.round(num * 100) / 100).toFixed(2);
+      };
+      // put the supplier payment details in an object
+      let supplierPaymentDetailsObject = {};
+      order?.orderItems?.forEach((orderItem) => {
+        // add supplier name, email, and amount to a object
+        if (
+          orderItem.product.supplierBankAccount in supplierPaymentDetailsObject
+        ) {
+          supplierPaymentDetailsObject[
+            orderItem.product.supplierBankAccount
+          ].amount = addDecimals(
+            addDecimals(
+              supplierPaymentDetailsObject[
+                orderItem.product.supplierBankAccount
+              ].amount
+            ) +
+              orderItem.qty * orderItem.price * Number(SUPPLIER_PERCENTAGE)
+          );
+        } else {
+          supplierPaymentDetailsObject[orderItem.product.supplierBankAccount] =
+            {
+              name: orderItem.product.supplierName,
+              email: orderItem.product.supplierEmail,
+              bankAccount: orderItem.product.supplierBankAccount,
+              amount: addDecimals(
+                orderItem.qty * orderItem.price * Number(SUPPLIER_PERCENTAGE)
+              ),
+            };
+        }
+      });
+
+      // convert supplierPaymentDetails object to list
+      let supplierPaymentDetailsList = [];
+      for (let key in supplierPaymentDetailsObject) {
+        supplierPaymentDetailsList.push(supplierPaymentDetailsObject[key]);
+      }
+
+      dispatch({
+        type: ORDER_SUPPLIER_PAY_DETAILS_SUCCESS,
+        payload: supplierPaymentDetailsList,
+      });
+    } catch (error) {
+      const message =
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message;
+      if (message === "Not authorized, token failed") {
+        dispatch(logout());
+      }
+      dispatch({
+        type: ORDER_SUPPLIER_PAY_DETAILS_FAIL,
+        payload: message,
+      });
+    }
+  };
