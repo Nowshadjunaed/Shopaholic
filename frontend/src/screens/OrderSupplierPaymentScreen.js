@@ -73,7 +73,7 @@ const OrderSupplierPaymentScreen = () => {
     }
   }, [dispatch, getOrderDetails, navigate, orderId, userInfo]);
 
-  const payOrderSupplierHandler = (async) => () => {
+  const payOrderSupplierHandler = () => {
     dispatch(payOrderSupplier(orderId, dataSupplierPayDetails));
   };
 
@@ -114,9 +114,10 @@ const OrderSupplierPaymentScreen = () => {
         <Loader />
       ) : errorSupplierPay ? (
         <Message variant="danger">{errorSupplierPay}</Message>
-      ) : order?.isSupplierPaid ? (
+      ) : order?.isSupplierPaid || successSupplierPay ? (
         <Button variant="success" className="btn-sm disabled">
-          Paid At {order?.supplierPaidAt?.substring(0, 10)}
+          Paid
+          {/* At {order?.supplierPaidAt?.substring(0, 10)} */}
         </Button>
       ) : (
         <Button

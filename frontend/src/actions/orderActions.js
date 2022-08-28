@@ -29,6 +29,7 @@ import {
   ORDER_SUPPLIER_PAY_DETAILS_REQUEST,
   ORDER_SUPPLIER_PAY_DETAILS_SUCCESS,
   ORDER_SUPPLIER_PAY_DETAILS_FAIL,
+  ORDER_SUPPLIER_PAY_RESET,
 } from "../constants/orderConstants";
 import { logout } from "./userActions";
 
@@ -373,6 +374,11 @@ export const getOrderSupplierPaymentDetails =
     try {
       dispatch({
         type: ORDER_SUPPLIER_PAY_DETAILS_REQUEST,
+      });
+
+      // reset previous payment status
+      dispatch({
+        type: ORDER_SUPPLIER_PAY_RESET,
       });
 
       const {
