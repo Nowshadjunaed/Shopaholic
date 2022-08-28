@@ -246,7 +246,7 @@ const OrderScreen = () => {
                 {loadingPay && <Loader />}
                 <Button
                   type="button"
-                  className="btn-block"
+                  className="btn-block col-12"
                   onClick={() => {
                     payNowHandler(order.totalPrice);
                   }}
@@ -262,7 +262,7 @@ const OrderScreen = () => {
                 <ListGroup.Item>
                   <Button
                     type="button"
-                    className="btn btn-block"
+                    className="btn-block col-12"
                     onClick={invoiceHandler}
                   >
                     View Invoice
