@@ -49,7 +49,7 @@ const ProfileScreen = () => {
                 setEmail(user.email)
             }
         }
-    }, [dispatch, navigate, user.email, user.name, userInfo, success])
+    }, [dispatch, navigate, user.email, user.name, userInfo, success, user])
 
     const submitHandler = (e) => {
         e.preventDefault()
