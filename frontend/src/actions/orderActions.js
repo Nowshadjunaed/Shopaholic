@@ -30,6 +30,7 @@ import {
   ORDER_SUPPLIER_PAY_DETAILS_SUCCESS,
   ORDER_SUPPLIER_PAY_DETAILS_FAIL,
   ORDER_SUPPLIER_PAY_RESET,
+  ORDER_LIST_REQUEST,
 } from "../constants/orderConstants";
 import { logout } from "./userActions";
 
@@ -257,7 +258,7 @@ export const payOrderSupplier =
 export const listOrders = () => async (dispatch, getState) => {
   try {
     dispatch({
-      type: ORDER_LIST_MY_REQUEST,
+      type: ORDER_LIST_REQUEST,
     });
 
     const {
