@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Button,
   Card,
@@ -16,9 +16,10 @@ import {
 } from "../actions/orderActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
+import axios from "axios";
 
 const OrderSupplierPaymentScreen = () => {
-  // const [supplierPaymentDetails, setSupplierPaymentDetails] = useState([]);
+  const [order, setOrder] = useState({});
 
   const { id } = useParams();
   const orderId = id;
@@ -41,23 +42,38 @@ const OrderSupplierPaymentScreen = () => {
   const orderSupplierPay = useSelector((state) => state.orderSupplierPay);
   const {
     loading: loadingSupplierPay,
-    success: successSupplierPay,
-    data: order,
     error: errorSupplierPay,
+    success: successSupplierPay,
   } = orderSupplierPay;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
+  // to get the order supplier payment status
+  const getOrderDetails = useCallback(async () => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+    const { data } = await axios.get(`/api/orders/${id}`, config);
+    console.log("berfore setOrder", data);
+
+    setOrder(data);
+    console.log("after setOrder", data);
+  }, [id, userInfo.token]);
+
   useEffect(() => {
     if (!userInfo || !userInfo.isAdmin) {
       navigate("/login");
     } else {
+      getOrderDetails();
       dispatch(getOrderSupplierPaymentDetails(orderId));
     }
-  }, [dispatch, navigate, orderId, userInfo]);
+  }, [dispatch, getOrderDetails, navigate, orderId, userInfo]);
 
-  const payOrderSupplierHandler = () => {
+  const payOrderSupplierHandler = (async) => () => {
     dispatch(payOrderSupplier(orderId, dataSupplierPayDetails));
   };
 
@@ -94,13 +110,13 @@ const OrderSupplierPaymentScreen = () => {
 
       {/* payment button */}
 
-      {!loadingSupplierPayDetails && loadingSupplierPay ? (
+      {loadingSupplierPayDetails || loadingSupplierPay ? (
         <Loader />
       ) : errorSupplierPay ? (
         <Message variant="danger">{errorSupplierPay}</Message>
       ) : order?.isSupplierPaid ? (
         <Button variant="success" className="btn-sm disabled">
-          Paid At {order.supplierPaidAt.substring(0, 10)}
+          Paid At {order?.supplierPaidAt?.substring(0, 10)}
         </Button>
       ) : (
         <Button

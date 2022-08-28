@@ -182,14 +182,11 @@ export const payOrderSupplier =
               },
             };
 
-            console.log("proceed transaction is called", paymentData);
             const { data: supplierPaymentResult } = await axios.post(
               `/bankapi/payment`,
               paymentData,
               config
             );
-
-            console.log("supplierPaymentResult ", supplierPaymentResult);
 
             const { data } = await axios.put(
               `/api/orders/${orderId}/supplierPay`,
@@ -228,21 +225,15 @@ export const payOrderSupplier =
           receiver_account_number: supplier.bankAccount,
         };
 
-        console.log(paymentData);
         const { data } = await axios.post(
           `/bankapi/payment/possible`,
           paymentData
         );
 
         const { isPaymentPossible } = data;
-        console.log("is possible", isPaymentPossible);
         if (isPaymentPossible) {
           successfulTransaction = successfulTransaction + 1;
         }
-        console.log(
-          "no of successfull transaction",
-          Number(successfulTransaction)
-        );
 
         if (Number(successfulTransaction) === supplierPaymentDetails.length)
           proceedTransaction();
@@ -396,7 +387,6 @@ export const getOrderSupplierPaymentDetails =
       };
       const { data } = await axios.get(`/api/orders/${id}`, config);
 
-      console.log("eta api er data ", data.orderItems);
       const order = data;
 
       //   Calculate prices
@@ -413,7 +403,7 @@ export const getOrderSupplierPaymentDetails =
           supplierPaymentDetailsObject[
             orderItem.product.supplierBankAccount
           ].amount = addDecimals(
-            addDecimals(
+            Number(
               supplierPaymentDetailsObject[
                 orderItem.product.supplierBankAccount
               ].amount
