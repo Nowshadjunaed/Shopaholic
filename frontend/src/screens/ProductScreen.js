@@ -105,7 +105,7 @@ const ProductScreen = () => {
               <ListGroup variant="flush">
                 <ListGroup.Item>
                   <Row>
-                    <Col>Price:</Col>
+                    <Col>Price/Item:</Col>
                     <Col>
                       <strong>${product.price}</strong>
                     </Col>
@@ -123,7 +123,7 @@ const ProductScreen = () => {
                 {product.countInStock > 0 && (
                   <ListGroup.Item>
                     <Row>
-                      <Col>Qty</Col>
+                      <Col>Quantity</Col>
                       <Col>
                         <Form.Control
                           as="select"
@@ -169,7 +169,7 @@ const ProductScreen = () => {
                   </ListGroup.Item>
                 ))}
                 <ListGroup.Item>
-                  <h2>Write a Customer Review</h2>
+                  <h2>Review This Product</h2>
                   {successProductReview && (
                     <Message variant='success'>
                       Review submitted successfully
@@ -189,11 +189,11 @@ const ProductScreen = () => {
                           onChange={(e) => setRating(e.target.value)}
                         >
                           <option value=''>Select...</option>
-                          <option value='1'>1 - Poor</option>
-                          <option value='2'>2 - Fair</option>
-                          <option value='3'>3 - Good</option>
-                          <option value='4'>4 - Very Good</option>
-                          <option value='5'>5 - Excellent</option>
+                          <option value='1'>1 - star</option>
+                          <option value='2'>2 - star</option>
+                          <option value='3'>3 - star</option>
+                          <option value='4'>4 - star</option>
+                          <option value='5'>5 - star</option>
                         </Form.Control>
                       </Form.Group>
                       <Form.Group controlId='comment'>

@@ -103,8 +103,29 @@ const OrderScreen = () => {
     } catch (error) {}
   };
 
-  const deliverHandler = () => {
-    dispatch(deliverOrder(order));
+  // const deliverHandler = () => {
+  //   dispatch(deliverOrder(order));
+  // };
+
+  const invoiceHandler = async () => {
+    try {
+      const invoicedata = {
+        orderlist: order
+  }
+      
+      const invoiceRouteCall = axios.post(`/api/invoice`, invoicedata);
+      console.log("invoice promise er age:" + invoiceRouteCall);
+
+      invoiceRouteCall.then(function (result) {
+        console.log("invoice ekhane bank_api: " + result.data.message);
+        console.log("hoise mama");
+        window.open('http://localhost:3000/invoices/'+order._id +'.pdf', '_blank');
+        
+      });
+    } catch (error) {
+      console.log("invoice: " + error)
+    }
+
   };
 
   return loading ? (
@@ -149,6 +170,7 @@ const OrderScreen = () => {
               </p>
               {order.isPaid ? (
                 <Message variant="success">Paid on {order.paidAt}</Message>
+                
               ) : (
                 <Message variant="danger">Not Paid</Message>
               )}
@@ -217,6 +239,7 @@ const OrderScreen = () => {
                   <Col>${order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
+
             </ListGroup>
             {!order.isPaid && (
               <ListGroup.Item>
@@ -234,18 +257,17 @@ const OrderScreen = () => {
             )}
             {loadingDeliver && <Loader />}
             {userInfo &&
-              userInfo.isAdmin &&
-              order.isPaid &&
-              !order.isDelivered && (
-                <ListGroupItem>
+              order.isPaid && (
+                
+                <ListGroup.Item>
                   <Button
                     type="button"
                     className="btn btn-block"
-                    onClick={deliverHandler}
+                    onClick={invoiceHandler}
                   >
-                    Mark As Delivered
+                    View Invoice
                   </Button>
-                </ListGroupItem>
+                </ListGroup.Item>
               )}
           </Card>
         </Col>
