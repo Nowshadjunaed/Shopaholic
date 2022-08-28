@@ -20,7 +20,7 @@ const payMoney = asyncHandler(async (req, res) => {
     const transaction = new Transaction({
       sender: user._id,
       receiver: receiver._id,
-      transactionAmount: amount,
+      transactionAmount: Number(amount),
     });
 
     const createdTransaction = await transaction.save();
