@@ -10,6 +10,15 @@ const payMoney = asyncHandler(async (req, res) => {
 
   const user = await User.findOne({ account_number });
 
+  // if(user.matchPassword(password))
+  // {
+    
+  // }
+  // else{
+  //   res.status(401);
+  //   throw new Error("Invalid PIN");
+  // }
+
   if (user) {
     user.balance = Number(user.balance) - Number(amount);
 

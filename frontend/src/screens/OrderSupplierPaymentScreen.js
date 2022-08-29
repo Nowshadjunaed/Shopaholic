@@ -115,7 +115,7 @@ const OrderSupplierPaymentScreen = () => {
       ) : errorSupplierPay ? (
         <Message variant="danger">{errorSupplierPay}</Message>
       ) : order?.isSupplierPaid || successSupplierPay ? (
-        <Button variant="success" className="btn-sm disabled">
+        <Button variant="success" className="btn-sm">
           Paid
           {/* At {order?.supplierPaidAt?.substring(0, 10)} */}
         </Button>

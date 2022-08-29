@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -7,6 +7,7 @@ import {
   ListGroup,
   ListGroupItem,
   Row,
+  Form
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -29,6 +30,8 @@ import { ADMIN_BANK_ACCOUNT } from "../constants/adminConstants";
 const OrderScreen = () => {
   const { id } = useParams();
   const orderId = id;
+
+  //const [BankPin, setPin] = useState('')
 
   const navigate = useNavigate();
 
@@ -78,12 +81,14 @@ const OrderScreen = () => {
   ]);
 
   const payNowHandler = async (total_amount) => {
+    //console.log("Ekhane PIN print HObe", BankPin)
     console.log(order.user);
     const paymentData = {
       email: order.user.email,
       account_number: order.user.account_number,
       amount: total_amount,
       receiver_account_number: ADMIN_BANK_ACCOUNT,
+      //password: BankPin
     };
     try {
       const bank_api_call = axios.post(`/bankapi/payment`, paymentData);
@@ -100,7 +105,9 @@ const OrderScreen = () => {
         };
         dispatch(payOrder(orderId, DataReceivedFromBankApi));
       });
-    } catch (error) {}
+    } catch (error) {
+      //console.log('paycall err: ',error)
+    }
   };
 
   // const deliverHandler = () => {
@@ -241,7 +248,20 @@ const OrderScreen = () => {
               </ListGroup.Item>
 
             </ListGroup>
+            {/* {!order.isPaid&&(
+            <ListGroup.Item>
+              
+            <Form >
+            
+            <Form.Group controlId='BankPin'>
+                <Form.Control type='password' placeholder='Enter PIN' value={BankPin} onChange={(e) => setPin(e.target.value)}>
+                </Form.Control>
+            </Form.Group>
+            </Form>
+            </ListGroup.Item>
+            )} */}
             {!order.isPaid && (
+              
               <ListGroup.Item>
                 {loadingPay && <Loader />}
                 <Button
