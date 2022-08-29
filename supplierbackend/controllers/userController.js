@@ -2,7 +2,7 @@ import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 
 // @desc    Auth user
-// @route   POST /bankapi/users/login
+// @route   POST /supplierapi/users/login
 // @access  Public
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -24,7 +24,7 @@ const authUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Register a new user
-// @route   POST /bankapi/users
+// @route   POST /supplierapi/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, phone_number, account_number, password } = req.body;
@@ -59,11 +59,39 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get all users
-// @route   GET /api/users
+// @route   GET /supplierapi/users
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
   const users = await User.find({});
   res.json(users);
 });
 
-export { authUser, registerUser, getUsers };
+// @desc    Get user by ID
+// @route   GET /bankapi/users/:id
+// @access
+const getUserById = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id).select("-password");
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
+// @desc    Get user by Bank Account Number
+// @route   GET /supplierapi/users/bankAccount/:account_number
+// @access
+const getUserByBankAccount = asyncHandler(async (req, res) => {
+  const user = await User.find({
+    account_number: req.params.account_number,
+  }).select("-password");
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
+export { authUser, registerUser, getUsers, getUserById, getUserByBankAccount };

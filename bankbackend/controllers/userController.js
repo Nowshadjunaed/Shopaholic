@@ -36,7 +36,6 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("User already exists");
   }
   let account_number = "";
-  console.log(req.body.email);
   for (let i = 0; i < email.length; i++) {
     let asci = email.charCodeAt(i);
     if (asci >= 48 && asci <= 57) {

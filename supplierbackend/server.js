@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import userRoutes from "./routes/userRoutes.js";
+import deliveryRequestRoutes from "./routes/deliveryRequestRoutes.js";
 import connectDB from "./config/db.js";
 import cors from "cors";
 
@@ -19,6 +20,7 @@ app.get("/supplierapi", (req, res) => {
 });
 
 app.use("/supplierapi/users", userRoutes);
+app.use("/supplierapi/deliveryRequests", deliveryRequestRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
