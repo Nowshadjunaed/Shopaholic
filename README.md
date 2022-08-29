@@ -1,4 +1,4 @@
-# Brevity
+# Shopaholic
 ### <b>Shopaholic is an E-Commerce site with 3 APIs: Ecommerce API, Bank API and Supplier API</b>
 <br/>
 
