@@ -24,7 +24,7 @@ const payMoney = asyncHandler(async (req, res) => {
     });
 
     const createdTransaction = await transaction.save();
-    console.log(createdTransaction);
+    // console.log(createdTransaction);
 
     const updatedUser = await user.save();
 

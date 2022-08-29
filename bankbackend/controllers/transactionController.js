@@ -9,4 +9,36 @@ const getTransactions = asyncHandler(async (req, res) => {
   res.json(transactions);
 });
 
-export { getTransactions };
+// @desc    Get transaction by ID
+// @route   GET /bankapi/transactions/:id
+// @access
+const getTransactionById = asyncHandler(async (req, res) => {
+  const transaction = await Transaction.findById(req.params.id).select(
+    "-password"
+  );
+  if (transaction) {
+    res.json(transaction);
+  } else {
+    res.status(404);
+    throw new Error("Transaction not found");
+  }
+});
+
+// @desc    Check transaction by ID
+// @route   GET /bankapi/transactions/:id/exists
+// @access
+const checkTransactionById = asyncHandler(async (req, res) => {
+  const transaction = await Transaction.findById(req.params.id);
+  console.log("transactoin exists api is called");
+  if (transaction) {
+    res.json({
+      isExists: true,
+    });
+  } else {
+    res.json({
+      isExists: false,
+    });
+  }
+});
+
+export { getTransactions, getTransactionById, checkTransactionById };

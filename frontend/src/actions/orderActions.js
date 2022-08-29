@@ -168,20 +168,28 @@ export const payOrderSupplier =
         userLogin: { userInfo },
       } = getState();
 
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      let supplierPaymentResultList = [];
+      let successfulTransaction = 0;
+
+      // if all the payment are possible then this block runs
       const proceedTransaction = () => {
+        console.log("ekhon proceed er block e");
+        // pays each supplier
         supplierPaymentDetails.forEach(async (supplier) => {
+          console.log("eta supplier payment details er element", supplier);
           try {
             const paymentData = {
               email: ADMIN_EMAIL,
               account_number: ADMIN_BANK_ACCOUNT,
               amount: supplier.amount,
               receiver_account_number: supplier.bankAccount,
-            };
-            const config = {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${userInfo.token}`,
-              },
             };
 
             const { data: supplierPaymentResult } = await axios.post(
@@ -190,18 +198,40 @@ export const payOrderSupplier =
               config
             );
 
-            const { data } = await axios.put(
-              `/api/orders/${orderId}/supplierPay`,
-              supplierPaymentResult,
-              config
+            if (supplierPaymentResult) successfulTransaction++;
+
+            const supplierPaymentTransaction = {
+              supplierBankAccount: supplier.bankAccount,
+              transactionNumber: supplierPaymentResult.id,
+              amount: supplier.amount,
+            };
+
+            // push each transaction details into a list to send backend to update the order
+            supplierPaymentResultList.push(supplierPaymentTransaction);
+
+            console.log(
+              "order update korar condition",
+              successfulTransaction,
+              " ",
+              successfulTransactionPossible
             );
+            if (successfulTransaction === successfulTransactionPossible) {
+              // save supplier payment details to the order if all the payments are successful
+              const updatedOrder = axios.put(
+                `/api/orders/${orderId}/supplierPay`,
+                supplierPaymentResultList,
+                config
+              );
 
-            dispatch({
-              type: ORDER_SUPPLIER_PAY_SUCCESS,
-              payload: data,
-            });
+              const data = {
+                supplierPaymentResultList: supplierPaymentResultList,
+              };
 
-            // dispatch supplier, please deliver
+              dispatch({
+                type: ORDER_SUPPLIER_PAY_SUCCESS,
+                payload: data,
+              });
+            }
           } catch (error) {
             const message =
               error.response && error.response.data.message
@@ -218,7 +248,7 @@ export const payOrderSupplier =
         });
       };
 
-      let successfulTransaction = 0;
+      let successfulTransactionPossible = 0;
       supplierPaymentDetails.forEach(async (supplier) => {
         const paymentData = {
           email: ADMIN_EMAIL,
@@ -231,14 +261,24 @@ export const payOrderSupplier =
           `/bankapi/payment/possible`,
           paymentData
         );
-
+        console.log("eta payment possible er response", data);
         const { isPaymentPossible } = data;
         if (isPaymentPossible) {
-          successfulTransaction = successfulTransaction + 1;
+          successfulTransactionPossible = successfulTransactionPossible + 1;
         }
 
-        if (Number(successfulTransaction) === supplierPaymentDetails.length)
+        // if all the transactions are possible then execute them
+        console.log(
+          "successful transaction possible",
+          successfulTransactionPossible
+        );
+        if (
+          Number(successfulTransactionPossible) ===
+          supplierPaymentDetails.length
+        ) {
+          console.log("transaction is proceeeeeeeeeeding");
           proceedTransaction();
+        }
       });
     } catch (error) {
       const message =

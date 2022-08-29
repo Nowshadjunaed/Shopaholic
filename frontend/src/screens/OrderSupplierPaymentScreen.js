@@ -11,6 +11,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  deliverOrder,
   getOrderSupplierPaymentDetails,
   payOrderSupplier,
 } from "../actions/orderActions";
@@ -18,11 +19,17 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 import axios from "axios";
 
+// payment button click -> payOrderSupplier dispatch
+// if success supplier payment then delivery request to supplier
+// if deliveryRequest is successul then deliver to user
+
 const OrderSupplierPaymentScreen = () => {
   const [order, setOrder] = useState({});
 
-  const { id } = useParams();
-  const orderId = id;
+  const { id: orderId } = useParams();
+
+  console.log("eta orderId", orderId);
+  console.log("eta order", order);
 
   const navigate = useNavigate();
 
@@ -42,6 +49,8 @@ const OrderSupplierPaymentScreen = () => {
   const orderSupplierPay = useSelector((state) => state.orderSupplierPay);
   const {
     loading: loadingSupplierPay,
+    // supplierPaymentResult sent bynk to ecommerce is stored here
+    supplierPay: supplierPaymentResultListObject,
     error: errorSupplierPay,
     success: successSupplierPay,
   } = orderSupplierPay;
@@ -57,24 +66,91 @@ const OrderSupplierPaymentScreen = () => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    const { data } = await axios.get(`/api/orders/${id}`, config);
-    console.log("berfore setOrder", data);
 
-    setOrder(data);
-    console.log("after setOrder", data);
-  }, [id, userInfo.token]);
+    try {
+      const isOrderResponse = axios.get(`/api/orders/${orderId}`, config);
+
+      console.log("isOrderResponsethen er age");
+
+      isOrderResponse.then(function (result) {
+        console.log("isOrderResponse then er pore");
+        const order = result.data;
+        console.log("eta then  er pore result data", result.data);
+        console.log("eta order", order);
+        setOrder(order);
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }, [orderId, userInfo.token]);
+
+  ////////////////////////////
+
+  // function for sending api request to supplier with delivery request
+  const deliveryRequestToSuppliers = useCallback(
+    async (order, supplierPaymentResultList) => {
+      try {
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        };
+
+        console.log(
+          "eta deliveryRequest er vetor supplierPaymentResultList",
+          supplierPaymentResultList
+        );
+        // send delivery request to supplier api
+        const isDeliveryRequestSuccessfulResponse = axios.post(
+          `/supplierapi/deliveryRequests`,
+          supplierPaymentResultList,
+          config
+        );
+
+        console.log("eta .then er age ", isDeliveryRequestSuccessfulResponse);
+
+        isDeliveryRequestSuccessfulResponse.then(function (result) {
+          const isDeliveryRequestSuccessful =
+            result.data.isDeliveryRequestSuccessful;
+
+          if (isDeliveryRequestSuccessful) {
+            if (!order.isDeliverd) dispatch(deliverOrder(order));
+          }
+        });
+      } catch (error) {}
+    },
+
+    [dispatch, userInfo.token]
+  );
+
+  // send delivery request after paying supplier
+  if (successSupplierPay) {
+    console.log("delivery request je order ke dicchi", order);
+    if (!order.isDeliverd)
+      deliveryRequestToSuppliers(order, supplierPaymentResultListObject);
+  }
+
+  /////////////////////////////////
 
   useEffect(() => {
     if (!userInfo || !userInfo.isAdmin) {
       navigate("/login");
-    } else {
-      getOrderDetails();
-      dispatch(getOrderSupplierPaymentDetails(orderId));
     }
-  }, [dispatch, getOrderDetails, navigate, orderId, userInfo]);
+  }, [navigate, userInfo]);
+
+  useEffect(() => {
+    getOrderDetails();
+    dispatch(getOrderSupplierPaymentDetails(orderId));
+
+    console.log("inside second useEffect");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const payOrderSupplierHandler = () => {
-    dispatch(payOrderSupplier(orderId, dataSupplierPayDetails));
+    if (!order?.isSupplierPaid) {
+      dispatch(payOrderSupplier(orderId, dataSupplierPayDetails));
+    }
   };
 
   return (
@@ -110,7 +186,9 @@ const OrderSupplierPaymentScreen = () => {
 
       {/* payment button */}
 
-      {loadingSupplierPayDetails || loadingSupplierPay ? (
+      {loadingSupplierPayDetails ? (
+        <></>
+      ) : loadingSupplierPay ? (
         <Loader />
       ) : errorSupplierPay ? (
         <Message variant="danger">{errorSupplierPay}</Message>
