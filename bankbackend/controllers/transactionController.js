@@ -9,6 +9,16 @@ const getTransactions = asyncHandler(async (req, res) => {
   res.json(transactions);
 });
 
+// @desc    Get logged in user transactions
+// @route   GET /bankapi/transactions/mytransactions/:id
+// @access
+const getMyTransactions = asyncHandler(async (req, res) => {
+  console.log("eta req.user");
+  // const transactions = await Transaction.find({ sender: req.params.id });
+  const transactions = await Transaction.find().or([{ sender: req.params.id }]);
+  res.json(transactions);
+});
+
 // @desc    Get transaction by ID
 // @route   GET /bankapi/transactions/:id
 // @access
@@ -41,4 +51,9 @@ const checkTransactionById = asyncHandler(async (req, res) => {
   }
 });
 
-export { getTransactions, getTransactionById, checkTransactionById };
+export {
+  getTransactions,
+  getTransactionById,
+  checkTransactionById,
+  getMyTransactions,
+};

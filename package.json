@@ -10,7 +10,8 @@
     "bankserver": "nodemon bankbackend/server",
     "supplierserver": "nodemon supplierbackend/server",
     "client": "npm start --prefix frontend",
-    "dev": "concurrently \"npm run server\" \"npm run client\" \"npm run bankserver\" \"npm run supplierserver\"",
+    "bankclient": "npm start --prefix bankfrontend",
+    "dev": "concurrently \"npm run server\" \"npm run bankserver\" \"npm run supplierserver\" \"npm run client\" \"npm run bankclient\"",
     "data:import": "node backend/seeder",
     "data:destroy": "node backend/seeder -d"
   },

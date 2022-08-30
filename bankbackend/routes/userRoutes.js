@@ -10,6 +10,6 @@ const router = express.Router();
 
 router.route("/").post(registerUser).get(getUsers);
 router.post("/login", authUser);
-router.route("/profile").get(getUserBalance).put(balanceDeposit);
+router.route("/profile").post(getUserBalance).put(balanceDeposit);
 
 export default router;
