@@ -31,7 +31,9 @@ const OrderScreen = () => {
   const { id } = useParams();
   const orderId = id;
 
-  //const [BankPin, setPin] = useState('')
+  const [BankPin, setPin] = useState('')
+  const [InvalidPinMessage, setInvalidPinMessage] = useState(false)
+  const [PinMessage,setPinMessage] = useState('')
 
   const navigate = useNavigate();
 
@@ -80,20 +82,29 @@ const OrderScreen = () => {
     navigate,
   ]);
 
-  const payNowHandler = async (total_amount) => {
-    //console.log("Ekhane PIN print HObe", BankPin)
+  const payNowHandler = async (e) => {
+    e.preventDefault();
+    console.log("Ekhane PIN print HObe", BankPin)
     console.log(order.user);
     const paymentData = {
       email: order.user.email,
       account_number: order.user.account_number,
-      amount: total_amount,
+      amount: order.totalPrice,
       receiver_account_number: ADMIN_BANK_ACCOUNT,
-      //password: BankPin
+      password: BankPin
     };
     try {
-      const bank_api_call = axios.post(`/bankapi/payment`, paymentData);
-      console.log("promise er age:" + bank_api_call);
+      const bank_api_call = axios.post(`/bankapi/payment`, paymentData).catch( (error) =>{
+        console.log("eta kaj korse",error.response.data.message)
+        setInvalidPinMessage(true)
+        setPinMessage('Invalid PIN')
 
+      });
+      console.log("promise er age:", bank_api_call.result);
+      // if(!bank_api_call.result.data.id)
+      // {
+      //   throw new error("Invalid PIN or your account number is invalid")
+      // }
       bank_api_call.then(function (result) {
         console.log("ekhane bank_api: " + result.data);
         console.log("hoise mama");
@@ -106,7 +117,7 @@ const OrderScreen = () => {
         dispatch(payOrder(orderId, DataReceivedFromBankApi));
       });
     } catch (error) {
-      //console.log('paycall err: ',error)
+      console.log('paycall err: ',error.message)
     }
   };
 
@@ -217,7 +228,7 @@ const OrderScreen = () => {
           </ListGroup>
         </Col>
         <Col md={4}>
-          <Card>
+          <Card className='mb-2'>
             <ListGroup variant="flush">
               <ListGroup.Item>
                 <h2>Order Summary</h2>
@@ -248,7 +259,7 @@ const OrderScreen = () => {
               </ListGroup.Item>
 
             </ListGroup>
-            {/* {!order.isPaid&&(
+            {!order.isPaid&&(
             <ListGroup.Item>
               
             <Form >
@@ -259,7 +270,7 @@ const OrderScreen = () => {
             </Form.Group>
             </Form>
             </ListGroup.Item>
-            )} */}
+            )}
             {!order.isPaid && (
               
               <ListGroup.Item>
@@ -267,14 +278,13 @@ const OrderScreen = () => {
                 <Button
                   type="button"
                   className="btn-block col-12"
-                  onClick={() => {
-                    payNowHandler(order.totalPrice);
-                  }}
+                  onClick={payNowHandler}
                 >
                   Pay Now
                 </Button>
               </ListGroup.Item>
             )}
+
             {loadingDeliver && <Loader />}
             {userInfo &&
               order.isPaid && (
@@ -290,6 +300,8 @@ const OrderScreen = () => {
                 </ListGroup.Item>
               )}
           </Card>
+          
+          {InvalidPinMessage && <Message variant='danger'>{PinMessage}</Message>}
         </Col>
       </Row>
     </>

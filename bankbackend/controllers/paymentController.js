@@ -6,10 +6,10 @@ import User from "../models/userModel.js";
 // @route   PUT /bankapi/payment/
 // @access  Private
 const payMoney = asyncHandler(async (req, res) => {
-  const { email, account_number, amount, receiver_account_number } = req.body;
+  const { email, account_number, amount, receiver_account_number, password } = req.body;
 
   const user = await User.findOne({ account_number });
-
+  
   // if(user.matchPassword(password))
   // {
     
@@ -19,7 +19,7 @@ const payMoney = asyncHandler(async (req, res) => {
   //   throw new Error("Invalid PIN");
   // }
 
-  if (user) {
+  if (user && (await user.matchPassword(password))) {
     user.balance = Number(user.balance) - Number(amount);
 
     const receiver = await User.findOne({ receiver_account_number });
@@ -58,7 +58,7 @@ const payMoney = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(404);
-    throw new Error("User not found");
+    throw new Error("Invalid PIN");
   }
 });
 
