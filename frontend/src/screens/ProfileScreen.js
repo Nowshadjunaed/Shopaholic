@@ -15,6 +15,7 @@ const ProfileScreen = () => {
 
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
+    const [account_number, setAccountNo] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [message, setMessage] = useState(null)
@@ -47,9 +48,10 @@ const ProfileScreen = () => {
             } else {
                 setName(user.name)
                 setEmail(user.email)
+                setAccountNo(user.account_number)
             }
         }
-    }, [dispatch, navigate, user.email, user.name, userInfo, success, user])
+    }, [dispatch, navigate, user.email, user.name, user.account_number, userInfo, success, user])
 
     const submitHandler = (e) => {
         e.preventDefault()
@@ -57,7 +59,7 @@ const ProfileScreen = () => {
             setMessage('Passwords do not match')
         } else {
             // DISPATCH UPDATE PROFILE
-            dispatch(updateUserProfile({ id: user._id, name, email, password }))
+            dispatch(updateUserProfile({ id: user._id, name, email, account_number, password }))
         }
 
     }
@@ -78,6 +80,11 @@ const ProfileScreen = () => {
             <Form.Group controlId='email'>
                 <Form.Label>Email Address</Form.Label>
                 <Form.Control type='email' placeholder='Enter email' value={email} onChange={(e) => setEmail(e.target.value)}>
+                </Form.Control>
+            </Form.Group>
+            <Form.Group controlId='account_number'>
+                <Form.Label>Bank Account Number</Form.Label>
+                <Form.Control type='account_number' placeholder='Enter bank account number' value={account_number} onChange={(e) => setAccountNo(e.target.value)}>
                 </Form.Control>
             </Form.Group>
             <Form.Group controlId='password'>
