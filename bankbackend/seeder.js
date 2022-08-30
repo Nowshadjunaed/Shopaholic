@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import users from './data/users.js'
 import User from './models/userModel.js'
+import Transaction from './models/transactionModel.js'
 import connectDB from './config/db.js'
 
 dotenv.config()
@@ -11,8 +12,8 @@ connectDB()
 const importData = async () => {
   try {
     await User.deleteMany()
-
-    const createdUsers = await User.insertMany(users)
+    await Transaction.deleteMany()
+    //const createdUsers = await User.insertMany(users)
 
     console.log('Data Imported!')
     process.exit()

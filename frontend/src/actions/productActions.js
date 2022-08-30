@@ -12,6 +12,9 @@ import {
   PRODUCT_LIST_FAIL,
   PRODUCT_LIST_REQUEST,
   PRODUCT_LIST_SUCCESS,
+  PRODUCT_LIST_By_Category_REQUEST,
+  PRODUCT_LIST_By_Category_SUCCESS,
+  PRODUCT_LIST_By_Category_FAIL,
   PRODUCT_UPDATE_FAIL,
   PRODUCT_UPDATE_REQUEST,
   PRODUCT_UPDATE_SUCCESS,
@@ -23,7 +26,9 @@ import { logout } from './userActions'
 
 export const listProducts = (keyword = '') => async (dispatch) => {
   try {
+
     dispatch({ type: PRODUCT_LIST_REQUEST });
+    console.log("ekhane kywrd: ", keyword)
 
     const { data } = await axios.get(`/api/products?keyword=${keyword}`);
 
@@ -34,6 +39,30 @@ export const listProducts = (keyword = '') => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: PRODUCT_LIST_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const listProductsByCategory = (category) => async (dispatch) => {
+  try {
+    console.log('by category action theke bolsi')
+    dispatch({ type: PRODUCT_LIST_By_Category_REQUEST });
+    const reqData = {
+      category: category
+    }
+    const { data } = await axios.post(`/api/products/category`,reqData);
+
+    dispatch({
+      type: PRODUCT_LIST_By_Category_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: PRODUCT_LIST_By_Category_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

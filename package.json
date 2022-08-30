@@ -12,6 +12,7 @@
     "client": "npm start --prefix frontend",
     "dev": "concurrently \"npm run server\" \"npm run client\" \"npm run bankserver\" \"npm run supplierserver\"",
     "data:import": "node backend/seeder",
+    "data:importbank": "node bankbackend/seeder",
     "data:destroy": "node backend/seeder -d"
   },
   "repository": {

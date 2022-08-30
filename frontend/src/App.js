@@ -19,7 +19,7 @@ import ProductListScreen from "./screens/ProductListScreen";
 import OrderListScreen from "./screens/OrderListScreen";
 import ProductEditScreen from "./screens/ProductEditScreen";
 import OrderSupplierPaymentScreen from "./screens/OrderSupplierPaymentScreen";
-
+import CategoryWiseProductScreen from "./screens/CategoryWiseProductScreen";
 const App = () => {
   return (
     <Router>
@@ -42,6 +42,7 @@ const App = () => {
             <Route path="/product/:id" element={<ProductScreen />} />
             <Route path="/cart" element={<CartScreen />} />
             <Route path="/cart/:id" element={<CartScreen />} />
+            <Route path="/category" element={<CategoryWiseProductScreen/>} />
             <Route path="/admin/userList" element={<UserListScreen />} />
             <Route path="/admin/user/:id/edit" element={<UserEditScreen />} />
             <Route path="/admin/productList" element={<ProductListScreen />} />
