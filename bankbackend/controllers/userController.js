@@ -78,9 +78,9 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Get user Balance
-// @route   GET /bankapi/users/profile
-// @access  Private
+// @desc    Get user Balance by sending account number in body
+// @route   POST /bankapi/users/profile
+// @access
 const getUserBalance = asyncHandler(async (req, res) => {
   const { account_number } = req.body;
 
@@ -88,8 +88,10 @@ const getUserBalance = asyncHandler(async (req, res) => {
 
   if (user) {
     res.json({
+      name: user.name,
+      email: user.email,
       account_number: user.account_number,
-      your_current_balance: user.balance,
+      current_balance: user.balance,
     });
   } else {
     res.status(404);
