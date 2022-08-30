@@ -18,6 +18,16 @@ const getProducts = asyncHandler(async (req, res) => {
   res.json(products);
 });
 
+// @desc    Fetch all products by a particular category
+// @route   GET /api/products/
+// @access  Public
+const getProductsByCategory = asyncHandler(async (req, res) => {
+  const { category } = req.body;
+  const products = await Product.find({category: category});
+  console.log('by cat controller theke bolsi',category)
+  console.log(products)
+  res.json(products);
+});
 // @desc    Fetch single product
 // @route   GET /api/products/:id
 // @access  Public
@@ -148,6 +158,7 @@ const createProductReview = asyncHandler(async (req, res) => {
 
 export {
   getProducts,
+  getProductsByCategory,
   getProductById,
   deleteProduct,
   createProduct,

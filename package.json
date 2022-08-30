@@ -13,6 +13,7 @@
     "bankclient": "npm start --prefix bankfrontend",
     "dev": "concurrently \"npm run server\" \"npm run bankserver\" \"npm run supplierserver\" \"npm run client\" \"npm run bankclient\"",
     "data:import": "node backend/seeder",
+    "data:importbank": "node bankbackend/seeder",
     "data:destroy": "node backend/seeder -d"
   },
   "repository": {
