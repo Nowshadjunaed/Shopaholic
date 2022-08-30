@@ -114,6 +114,7 @@ const OrderScreen = () => {
           status: result.data.status,
           update_time: result.data.update_time,
         };
+        setInvalidPinMessage(false)
         dispatch(payOrder(orderId, DataReceivedFromBankApi));
       });
     } catch (error) {
