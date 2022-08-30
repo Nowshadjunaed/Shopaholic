@@ -6,7 +6,9 @@ import {
   ListGroup,
   ListGroupItem,
   Row,
+  Form,
   Table,
+  Alert
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -31,6 +33,10 @@ const OrderSupplierPaymentScreen = () => {
   console.log("eta orderId", orderId);
   console.log("eta order", order);
 
+  const [BankPin, setPin] = useState('')
+  const [InvalidPinMessage, setInvalidPinMessage] = useState(false)
+  const [PinMessage,setPinMessage] = useState('')
+  
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
@@ -149,7 +155,7 @@ const OrderSupplierPaymentScreen = () => {
 
   const payOrderSupplierHandler = () => {
     if (!order?.isSupplierPaid) {
-      dispatch(payOrderSupplier(orderId, dataSupplierPayDetails));
+      dispatch(payOrderSupplier(orderId, dataSupplierPayDetails, BankPin));
     }
   };
 
@@ -191,13 +197,38 @@ const OrderSupplierPaymentScreen = () => {
       ) : loadingSupplierPay ? (
         <Loader />
       ) : errorSupplierPay ? (
-        <Message variant="danger">{errorSupplierPay}</Message>
+        <>
+          <Message variant="danger">{errorSupplierPay}</Message>
+          <Form >
+          
+            <Form.Group controlId='BankPin'>
+                <Form.Control type='password' placeholder='Enter PIN' value={BankPin} onChange={(e) => setPin(e.target.value)}>
+                </Form.Control>
+            </Form.Group>
+          </Form>
+
+          <Button
+            variant="primary"
+            className="btn-sm"
+            onClick={() => payOrderSupplierHandler()}
+          >
+            Pay Now
+          </Button>
+        </>
       ) : order?.isSupplierPaid || successSupplierPay ? (
-        <Button variant="success" className="btn-sm">
+        <Alert key={"success"} variant={"success"}>
           Paid
-          {/* At {order?.supplierPaidAt?.substring(0, 10)} */}
-        </Button>
+        </Alert>
       ) : (
+        <>
+        <Form >
+        
+          <Form.Group controlId='BankPin'>
+              <Form.Control type='password' placeholder='Enter PIN' value={BankPin} onChange={(e) => setPin(e.target.value)}>
+              </Form.Control>
+          </Form.Group>
+        </Form>
+
         <Button
           variant="primary"
           className="btn-sm"
@@ -205,6 +236,7 @@ const OrderSupplierPaymentScreen = () => {
         >
           Pay Now
         </Button>
+        </>
       )}
     </>
   );

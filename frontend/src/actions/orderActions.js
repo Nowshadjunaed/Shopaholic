@@ -158,7 +158,7 @@ export const payOrder =
   };
 
 export const payOrderSupplier =
-  (orderId, supplierPaymentDetails) => async (dispatch, getState) => {
+  (orderId, supplierPaymentDetails, BankPin) => async (dispatch, getState) => {
     try {
       dispatch({
         type: ORDER_SUPPLIER_PAY_REQUEST,
@@ -190,19 +190,27 @@ export const payOrderSupplier =
               account_number: ADMIN_BANK_ACCOUNT,
               amount: supplier.amount,
               receiver_account_number: supplier.bankAccount,
+              password: BankPin
             };
 
-            const { data: supplierPaymentResult } = await axios.post(
+            const data = await axios.post(
               `/bankapi/payment`,
               paymentData,
               config
-            );
-
+            ).catch( (error) =>{
+              console.log("eta kaj korse",error.response.data.message)
+              dispatch({
+                type: ORDER_SUPPLIER_PAY_FAIL,
+                payload: "Invalid PIN",
+              });
+      
+            });
+            const supplierPaymentResult = data?.data
             if (supplierPaymentResult) successfulTransaction++;
 
             const supplierPaymentTransaction = {
               supplierBankAccount: supplier.bankAccount,
-              transactionNumber: supplierPaymentResult.id,
+              transactionNumber: supplierPaymentResult?.id,
               amount: supplier.amount,
             };
 
