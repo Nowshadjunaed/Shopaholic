@@ -71,7 +71,7 @@
   --bs-border-radius-2xl: 2rem;
   --bs-border-radius-pill: 50rem;
   --bs-link-color: #2aa198;
-  --bs-link-hover-color: #2aa198;
+  --bs-link-hover-color: #a17b2a;
   --bs-code-color: #e83e8c;
   --bs-highlight-bg: #f5dbd0;
 }
@@ -239,7 +239,7 @@ sup {
 }
 a {
   color: var(--bs-link-color);
-  text-decoration: underline;
+  text-decoration: none;
 }
 a:hover {
   color: var(--bs-link-hover-color);
@@ -2788,7 +2788,7 @@ fieldset:disabled .btn {
   --bs-btn-bg: #058369;
   --bs-btn-border-color: #a7a292;
   --bs-btn-hover-color: #fff;
-  --bs-btn-hover-bg: #2f6960;;
+  --bs-btn-hover-bg: #2f6960;
   --bs-btn-hover-border-color: #916e00;
   --bs-btn-focus-shadow-rgb: 192, 155, 38;
   --bs-btn-active-color: #fff;
@@ -7683,8 +7683,8 @@ fieldset:disabled .btn {
 .text-decoration-none {
   text-decoration: none !important;
 }
-.text-decoration-underline { 
-  text-decoration: underline !important; 
+.text-decoration-underline {
+  text-decoration: underline !important;
 }
 .text-decoration-line-through {
   text-decoration: line-through !important;
@@ -10506,7 +10506,7 @@ fieldset:disabled .btn {
   background-color: #cb4b16;
 }
 .alert-danger {
-  background-color: #58243d;;
+  background-color: #58243d;
 }
 .alert-light {
   background-color: #fdf6e3;
