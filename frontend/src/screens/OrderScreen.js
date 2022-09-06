@@ -84,7 +84,6 @@ const OrderScreen = () => {
 
   const payNowHandler = async (e) => {
     e.preventDefault();
-    console.log("Ekhane PIN print HObe", BankPin)
     console.log(order.user);
     const paymentData = {
       email: order.user.email,

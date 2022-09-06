@@ -179,10 +179,10 @@ export const payOrderSupplier =
       let successfulTransaction = 0;
 
       // if all the payment are possible then this block runs
-      const proceedTransaction = () => {
+      const proceedTransaction = async () => {
         console.log("ekhon proceed er block e");
         // pays each supplier
-        supplierPaymentDetails.forEach(async (supplier) => {
+        for(const supplier of supplierPaymentDetails){
           console.log("eta supplier payment details er element", supplier);
           try {
             const paymentData = {
@@ -253,7 +253,7 @@ export const payOrderSupplier =
               payload: message,
             });
           }
-        });
+        }//);
       };
 
       let successfulTransactionPossible = 0;

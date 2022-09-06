@@ -8,21 +8,14 @@ import User from "../models/userModel.js";
 const payMoney = asyncHandler(async (req, res) => {
   const { email, account_number, amount, receiver_account_number, password } = req.body;
 
-  const user = await User.findOne({ account_number });
+  console.log(email,account_number,amount,receiver_account_number)
+  const user = await User.findOne({ account_number: account_number });
   
-  // if(user.matchPassword(password))
-  // {
-    
-  // }
-  // else{
-  //   res.status(401);
-  //   throw new Error("Invalid PIN");
-  // }
-
   if (user && (await user.matchPassword(password))) {
     user.balance = Number(user.balance) - Number(amount);
+    const updatedUser = await user.save();
 
-    const receiver = await User.findOne({ receiver_account_number });
+    const receiver = await User.findOne({account_number: receiver_account_number });
 
     receiver.balance = Number(receiver.balance) + Number(amount);
 
@@ -34,8 +27,6 @@ const payMoney = asyncHandler(async (req, res) => {
 
     const createdTransaction = await transaction.save();
     // console.log(createdTransaction);
-
-    const updatedUser = await user.save();
 
     const updatedReceiver = await receiver.save();
 
@@ -67,7 +58,7 @@ const payMoney = asyncHandler(async (req, res) => {
 const paymentPossible = asyncHandler(async (req, res) => {
   const { account_number, amount } = req.body;
 
-  const user = await User.findOne({ account_number });
+  const user = await User.findOne({account_number: account_number });
 
   if (user) {
     let isPaymentPossible;

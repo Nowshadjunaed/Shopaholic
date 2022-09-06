@@ -73,7 +73,7 @@ const createProduct = asyncHandler(async (req, res) => {
     description: "Sample description",
     supplierName: "Sample supplier",
     supplierEmail: "Sample email",
-    supplierBankAccount: "6308044981c3f4605093e453",
+    supplierBankAccount: "2921352211241491172311192292132523",
   });
 
   const createdProduct = await product.save();
