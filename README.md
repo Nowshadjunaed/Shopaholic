@@ -131,6 +131,10 @@ Install Frontend Dependecies:
 ```
 cd frontend
 npm i
+cd ..
+cd bankfrontend
+npm i
+cd ..
 ```
 To Run The Project
 ```
