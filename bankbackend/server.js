@@ -31,5 +31,7 @@ const PORT = process.env.PORT_BANK || 7000;
 
 app.listen(
   PORT,
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`)
+  console.log(
+    `Bank Server running in ${process.env.NODE_ENV} mode on port ${PORT}`
+  )
 );

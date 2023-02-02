@@ -15,7 +15,10 @@ const getTransactions = asyncHandler(async (req, res) => {
 const getMyTransactions = asyncHandler(async (req, res) => {
   console.log("eta req.user");
   // const transactions = await Transaction.find({ sender: req.params.id });
-  const transactions = await Transaction.find().or([{ sender: req.params.id }]);
+  const transactions = await Transaction.find().or([
+    { sender: req.params.id },
+    { receiver: req.params.id },
+  ]);
   res.json(transactions);
 });
 
